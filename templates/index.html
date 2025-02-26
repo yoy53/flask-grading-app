@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMR 채점</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: auto;
+        }
+        .student-section {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .answer-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .answer-group span {
+            width: 25px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .answer-group input {
+            width: 30px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .student-section input[name="name"] {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>OMR 채점 입력</h2>
+    <form method="POST">
+        <label>시험명:</label>
+        <input type="text" name="exam_name" required>
+
+        <h3>정답 입력</h3>
+        <div id="correctAnswers">
+            {% for i in range(0, 45, 5) %}
+            <div class="answer-group">
+                {% for j in range(5) %}
+                <span>{{ i + j + 1 }}</span>
+                <input type="text" name="correct_answers" maxlength="1" pattern="[1-5]" required 
+                    oninput="moveNext(this)" onkeydown="moveBack(event, this)">
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3>3점 문제 선택</h3>
+        <label>3점짜리 문항 번호 입력 (쉼표로 구분):</label>
+        <input type="text" name="three_points">
+
+        <h3>학생 답안 입력</h3>
+        <div id="students">
+            <div class="student-section">
+                <label>학생 이름:</label>
+                <input type="text" name="name" required>
+                <button type="button" class="btn btn-remove" onclick="removeStudent(this)">삭제</button>
+                <div class="student-answers">
+                    {% for i in range(0, 45, 5) %}
+                    <div class="answer-group">
+                        {% for j in range(5) %}
+                        <span>{{ i + j + 1 }}</span>
+                        <input type="text" name="answers" maxlength="1" pattern="[1-5]" required 
+                            oninput="moveNext(this)" onkeydown="moveBack(event, this)">
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+<button type="button" class="btn" onclick="addStudent()">+ 학생 추가</button>
+<button type="submit" class="btn">채점하기</button>
+
+<script>
+    function addStudent() {
+        let div = document.createElement('div');
+        div.classList.add('student-section');
+        div.innerHTML = `
+            <label>학생 이름:</label>
+            <input type="text" name="name" required>
+            <button type="button" class="btn btn-remove" onclick="removeStudent(this)">삭제</button>
+            <div class="student-answers">
+                ${generateAnswerFields()}
+            </div>
+        `;
+        document.getElementById('students').appendChild(div);
+    }
+
+    function removeStudent(button) {
+        let studentSection = button.parentElement;
+        document.getElementById('students').removeChild(studentSection);
+    }
+
+    function generateAnswerFields() {
+        let html = "";
+        for (let i = 0; i < 45; i += 5) {
+            html += '<div class="answer-group">';
+            for (let j = 0; j < 5; j++) {
+                let num = i + j + 1;
+                html += `<span>${num}</span><input type="text" name="answers" maxlength="1" pattern="[1-5]" required 
+                    oninput="moveNext(this)" onkeydown="moveBack(event, this)">`;
+            }
+            html += '</div>';
+        }
+        return html;
+    }
+
+        function moveNext(input) {
+            if (input.value.length === 1) {
+                let inputs = document.querySelectorAll("input[type='text']");
+                let index = Array.from(inputs).indexOf(input);
+                if (index >= 0 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            }
+        }
+
+        function moveBack(event, input) {
+            if (event.key === "Backspace" && input.value === "") {
+                let inputs = document.querySelectorAll("input[type='text']");
+                let index = Array.from(inputs).indexOf(input);
+                if (index > 0) {
+                    inputs[index - 1].focus();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

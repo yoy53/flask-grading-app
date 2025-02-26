@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채점 결과</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: auto;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .btn {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        /* 컬럼별 너비 지정 */
+        th:nth-child(1), td:nth-child(1) { width: 15%; } /* 이름 */
+        th:nth-child(2), td:nth-child(2) { width: 10%; } /* 듣기 점수 */
+        th:nth-child(3), td:nth-child(3) { width: 10%; } /* 읽기 점수 */
+        th:nth-child(4), td:nth-child(4) { width: 10%; } /* 총점 */
+        th:nth-child(5), td:nth-child(5) { width: 10%; } /* 등급 */
+        th:nth-child(6), td:nth-child(6) { width: 45%; } /* 틀린 문항 */
+
+        /* 틀린 문항 스타일 */
+        .wrong-answers {
+            font-size: 14px;  /* 글자 크기 축소 */
+            word-wrap: break-word;  /* 단어가 길면 자동 줄바꿈 */
+            max-height: 100px;  /* 너무 길어지지 않도록 제한 */
+            overflow-y: auto;  /* 길어질 경우 스크롤 */
+        }
+    </style>
+</head>
+<body>
+    <h2>채점 결과</h2>
+    
+    {% if exam_name %}
+        <h3>시험명: {{ exam_name }}</h3>
+    {% endif %}
+    
+    <table>
+        <thead>
+            <tr>
+                <th>이름</th>
+                <th>듣기 점수</th>
+                <th>읽기 점수</th>
+                <th>총점</th>
+                <th>등급</th>
+                <th>틀린 문항</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result["이름"] }}</td>
+                <td>{{ result["듣기 점수"] }}</td>
+                <td>{{ result["읽기 점수"] }}</td>
+                <td>{{ result["총점"] }}</td>
+                <td>{{ result["등급"] }}</td>
+                <td class="wrong-answers">
+                    {{ result["틀린 문항"] if result["틀린 문항"] else "없음" }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+
+    <a href="/export" class="btn">엑셀 파일 다운로드</a>
+    <a href="/" class="btn">다시 채점하기</a>
+</body>
+</html>
