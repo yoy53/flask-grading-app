@@ -104,5 +104,11 @@ def export():
      
     return send_file(output, as_attachment=True, download_name=file_name, mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
+@app.route("/keep-alive")
+def keep_alive():
+    return "OK"
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+
+
